@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  password  String
+  createdAt DateTime @default(now())
+  email     String
+  updatedAt DateTime @updatedAt
+  role      Role     @default(SURVEY)
+  name      String
+  nip       String
+  jabatan   String
+  surveys   Survey[] @relation("owner")
+}
+
+model Kecamatan {
+  kecamatanId   Int      @id @default(autoincrement())
+  namakecamatan String
+  desa          Desa[]
+  surveys       Survey[]
+}
+
+model Desa {
+  kecamatanId Int
+  desaId      Int       @id @default(autoincrement())
+  namadesa    String
+  kecamatan   Kecamatan @relation(fields: [kecamatanId], references: [kecamatanId])
+  surveys     Survey[]
+}
+
+model Survey {
+  id             Int       @id @default(autoincrement())
+  kodeSurvey     String    @unique
+  alamat         String
+  desaId         Int
+  kecamatanId    Int
+  pemilik        String
+  noKK           String
+  luasBangunan   Float?
+  koordinatLat   Float?
+  koordinatLng   Float?
+  kondisiAtap    String?
+  kondisiDinding String?
+  kondisiLantai  String?
+  sumberAir      String?
+  sanitasi       String?
+  jumlahPenghuni Int?
+  prioritas      Int       @default(3)
+  status         Status    @default(PENDING)
+  verifikatorId  Int?
+  catatanVerif   String?
+  createdById    Int
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  photos         Photo[]
+  createdBy      User      @relation("owner", fields: [createdById], references: [id])
+  desa           Desa      @relation(fields: [desaId], references: [desaId])
+  kecamatan      Kecamatan @relation(fields: [kecamatanId], references: [kecamatanId])
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  surveyId  Int
+  url       String
+  label     String?
+  createdAt DateTime @default(now())
+  survey    Survey   @relation(fields: [surveyId], references: [id])
+}
+
+enum Role {
+  SURVEY
+  VERIFIER
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
