@@ -26,6 +26,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Penting untuk cookie
         body: JSON.stringify({ nip, password }),
       });
 
@@ -34,10 +35,18 @@ export default function LoginPage() {
       if (!res.ok) {
         setNotif({ type: "error", message: data.error || "Login gagal, periksa kembali NIP atau password." });
       } else {
+        // Simpan token di localStorage sebagai backup
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
         setNotif({ type: "success", message: "Login berhasil! Mengarahkan ke dashboard..." });
-        setTimeout(() => router.push("/dashboard"), 1500);
+        // Tunggu sebentar agar cookie ter-set
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1000);
       }
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       setNotif({ type: "error", message: "Gagal terhubung ke server." });
     } finally {
       setLoading(false);
@@ -141,9 +150,8 @@ export default function LoginPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.4 }}
-              className={`absolute bottom-8 flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg text-white text-sm ${
-                notif.type === "success" ? "bg-green-600" : "bg-red-600"
-              }`}
+              className={`absolute bottom-8 flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg text-white text-sm ${notif.type === "success" ? "bg-green-600" : "bg-red-600"
+                }`}
             >
               {notif.type === "success" ? <CheckCircle size={18} /> : <XCircle size={18} />}
               {notif.message}
@@ -159,7 +167,7 @@ export default function LoginPage() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="hidden md:flex w-1/2 bg-gradient-to-tr from-blue-500 to-indigo-600 items-center justify-center relative overflow-hidden"
       >
-        
+
         <div className="absolute z-20 text-white px-10 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}

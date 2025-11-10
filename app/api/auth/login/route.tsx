@@ -36,6 +36,7 @@ export async function POST(req: Request) {
     const response = NextResponse.json({
       message: "Login berhasil",
       user: { id: user.id, name: user.name, email: user.email, nip: user.nip, role: user.role },
+      token, // Kirim token juga ke frontend sebagai backup
     });
 
     // ✅ Simpan token di cookie
@@ -43,7 +44,8 @@ export async function POST(req: Request) {
       name: "token",
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set false untuk development
+      sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24,
     });
