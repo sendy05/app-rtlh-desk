@@ -1,25 +1,27 @@
 import { NextResponse } from "next/server";
-import { Pool } from "pg";
+import { PrismaClient } from "@prisma/client";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const dbUrl = process.env.DATABASE_URL;
-    const res = await pool.query("SELECT NOW()");
-    return NextResponse.json({ 
-      success: true, 
-      dbUrl,
-      time: res.rows[0] 
+    // Test database connection dengan simple query
+    const result = await prisma.$queryRaw`SELECT NOW() as time`;
+
+    return NextResponse.json({
+      success: true,
+      message: "Database connection successful",
+      timestamp: result,
+      database: "Neon PostgreSQL"
     });
   } catch (err: any) {
-    return NextResponse.json({ 
-      success: false, 
-      dbUrl: process.env.DATABASE_URL,
-      error: err 
-    });
+    console.error("Database connection error:", err);
+    return NextResponse.json({
+      success: false,
+      error: err.message || "Database connection failed",
+      database: "Neon PostgreSQL"
+    }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

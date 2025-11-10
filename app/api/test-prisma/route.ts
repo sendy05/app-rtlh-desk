@@ -1,17 +1,26 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { PrismaNeon } from "@prisma/adapter-neon";  // jika menggunakan Neon adapter
 
-export const runtime = "nodejs"; // optional, default
+export const runtime = "nodejs";
 
-// kalau pakai adapter Neon:
-const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) });
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const result = await prisma.$queryRaw`SELECT NOW()`;
-    return NextResponse.json({ success: true, time: result });
+    const result = await prisma.$queryRaw`SELECT NOW() as current_time`;
+
+    return NextResponse.json({
+      success: true,
+      message: "Prisma connection successful",
+      data: result
+    });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message });
+    console.error("Prisma connection error:", error);
+    return NextResponse.json({
+      success: false,
+      error: error.message || "Prisma connection failed"
+    }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

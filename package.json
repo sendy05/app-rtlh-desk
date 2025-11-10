@@ -4,16 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint",
-    "postbuild": "node vercel-fix.js || echo 'Fix skipped'",
-    "postinstall": "npx prisma generate",
-    "vercel-build": "npx prisma generate && next build && node vercel-fix.js",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "vercel-build": "prisma generate && next build"
   },
   "dependencies": {
     "@changey/react-leaflet-markercluster": "^4.0.0-rc1",
@@ -60,6 +59,7 @@
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20.19.24",
     "@types/nodemailer": "^7.0.3",
+    "@types/pg": "^8.15.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/webpack": "^5.28.5",
