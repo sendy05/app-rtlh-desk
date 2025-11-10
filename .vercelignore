@@ -54,3 +54,7 @@ prisma/dev.db-journal
 *.test.tsx
 *.spec.ts
 *.spec.tsx
+
+# Optional: exclude test API routes (uncomment if not needed in production)
+# app/api/test-db
+# app/api/test-prisma
