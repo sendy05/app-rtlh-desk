@@ -1,24 +1,10 @@
 {
-    "buildCommand": "npx prisma generate && next build",
+    "buildCommand": "prisma generate && next build",
     "installCommand": "pnpm install",
     "framework": "nextjs",
     "regions": [
         "iad1"
     ],
-    "env": {
-        "DATABASE_URL": "@database_url",
-        "JWT_SECRET": "@jwt_secret",
-        "PRISMA_CLI_QUERY_ENGINE_TYPE": "binary",
-        "PRISMA_GENERATE_SKIP_AUTOINSTALL": "false"
-    },
-    "build": {
-        "env": {
-            "DATABASE_URL": "@database_url",
-            "JWT_SECRET": "@jwt_secret",
-            "PRISMA_CLI_QUERY_ENGINE_TYPE": "binary",
-            "PRISMA_GENERATE_SKIP_AUTOINSTALL": "false"
-        }
-    },
     "functions": {
         "app/api/**/*.ts": {
             "memory": 1024,
